@@ -37,6 +37,13 @@ yarn-error.log
 testem.log
 /typings
 __screenshots__/
+*.log
+npm-debug.log*
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
 
 # System files
 .DS_Store

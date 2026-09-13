@@ -1,59 +1,50 @@
-# OWHeroPoolFront
+# OW Hero Pool
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.3.37.
+A small Angular dashboard for browsing Overwatch hero pick / win / ban rates, scraped from Blizzard's own rates data by a companion backend.
 
-## Development server
+Filter by region, rank tier, and input type (PC/console), view the latest snapshot or pick a specific date, search by hero name, and sort by pick rate, win rate, ban rate, or name. A "Run scrape now" button can trigger a fresh scrape on the backend on demand.
 
-To start a local development server, run:
+## Tech stack
 
-```bash
-ng serve
-```
+- [Angular 20](https://angular.dev/) (standalone components, signals, `httpResource`)
+- TypeScript, SCSS
+- Karma / Jasmine for unit tests
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+This is the frontend only. It expects a backend API (Spring-based, see the model comments in [`overwatch.models.ts`](src/app/core/models/overwatch.models.ts)) exposing:
 
-## Code scaffolding
+- `GET /api/snapshots/latest` and `GET /api/snapshots/on` — hero snapshots, filterable by `region`, `tier`, `input`, and optionally `date`
+- `POST /api/scrape/run` — triggers a new scrape
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## Prerequisites
 
-```bash
-ng generate component component-name
-```
+- [Node.js](https://nodejs.org/) (LTS) and npm
+- The [heropool backend](.) running locally on `http://localhost:8080` (see [`proxy.conf.json`](proxy.conf.json) — `ng serve` proxies `/api` requests there in development)
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
+## Getting started
 
 ```bash
-ng build
+npm install
+npm start
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+Then open `http://localhost:4200/`. The app will reload automatically as you edit source files.
 
-## Running unit tests
+## Available scripts
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+| Command         | Description                                      |
+| --------------- | ------------------------------------------------- |
+| `npm start`     | Runs `ng serve` with the dev proxy to the backend  |
+| `npm run build` | Production build, output to `dist/`               |
+| `npm run watch` | Development build that rebuilds on file changes   |
+| `npm test`      | Runs unit tests with Karma                         |
 
-```bash
-ng test
+## Project structure
+
 ```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
+src/app/
+├── core/
+│   ├── models/       # Shared types mirroring the backend's DTOs/enums
+│   └── services/      # HTTP services
+└── features/
+    └── hero-dashboard/ # Filters, sorting, and the hero grid (by role)
 ```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
