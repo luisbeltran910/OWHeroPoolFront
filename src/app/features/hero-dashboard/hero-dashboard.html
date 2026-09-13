@@ -1,91 +1,93 @@
-<div class="dashboard">
-  <header class="dashboard__header">
-    <div class="dashboard__title">
-      <h1>OW Hero Pool</h1>
-      <p class="dashboard__subtitle">Live pick / win / ban rates, straight from Blizzard's rates API.</p>
+<header class="site-header">
+  <div class="site-header__inner">
+    <div class="brand">
+      <span class="brand__mark" aria-hidden="true">OW</span>
+      <div class="brand__copy">
+        <h1 class="brand__title">Hero Pool</h1>
+        <span class="brand__subtitle">Competitive pick, win &amp; ban rates</span>
+      </div>
     </div>
 
-    <button
-      type="button"
-      class="scrape-btn"
-      [disabled]="scraping()"
-      (click)="runScrape()"
-    >
-      @if (scraping()) {
-        Scraping…
-      } @else {
-        Run scrape now
-      }
+    <button type="button" class="scrape-btn" [disabled]="scraping()" (click)="runScrape()">
+      <svg class="scrape-btn__icon" [class.spin]="scraping()" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path
+          d="M20 11A8 8 0 1 0 18.5 16"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+        />
+        <path d="M20 5v6h-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+      {{ scraping() ? 'Scraping…' : 'Run scrape now' }}
     </button>
-  </header>
+  </div>
+</header>
 
+<main class="dashboard">
   @if (scrapeMessage(); as message) {
     <p class="scrape-message" [class.scrape-message--error]="scrapeError()">{{ message }}</p>
   }
 
-  <form class="filters" (submit)="$event.preventDefault()">
-    <label class="field">
-      <span>Region</span>
-      <select [ngModel]="region()" name="region" (ngModelChange)="region.set($event)">
-        @for (r of regions; track r) {
-          <option [value]="r">{{ regionLabels[r] }}</option>
-        }
-      </select>
-    </label>
+  <form class="toolbar" (submit)="$event.preventDefault()">
+    <div class="toolbar__filters">
+      <label class="field">
+        <span>Region</span>
+        <select [ngModel]="region()" name="region" (ngModelChange)="region.set($event)">
+          @for (r of regions; track r) {
+            <option [value]="r">{{ regionLabels[r] }}</option>
+          }
+        </select>
+      </label>
 
-    <label class="field">
-      <span>Tier</span>
-      <select [ngModel]="tier()" name="tier" (ngModelChange)="tier.set($event)">
-        @for (t of tiers; track t) {
-          <option [value]="t">{{ tierLabels[t] }}</option>
-        }
-      </select>
-    </label>
+      <label class="field">
+        <span>Tier</span>
+        <select [ngModel]="tier()" name="tier" (ngModelChange)="tier.set($event)">
+          @for (t of tiers; track t) {
+            <option [value]="t">{{ tierLabels[t] }}</option>
+          }
+        </select>
+      </label>
 
-    <label class="field">
-      <span>Input</span>
-      <select [ngModel]="inputType()" name="inputType" (ngModelChange)="inputType.set($event)">
-        @for (i of inputTypes; track i) {
-          <option [value]="i">{{ inputLabels[i] }}</option>
-        }
-      </select>
-    </label>
+      <label class="field">
+        <span>Input</span>
+        <select [ngModel]="inputType()" name="inputType" (ngModelChange)="inputType.set($event)">
+          @for (i of inputTypes; track i) {
+            <option [value]="i">{{ inputLabels[i] }}</option>
+          }
+        </select>
+      </label>
 
-    <div class="field field--mode">
-      <span>Snapshot</span>
-      <div class="mode-toggle">
-        <button
-          type="button"
-          [class.active]="mode() === 'latest'"
-          (click)="setMode('latest')"
-        >
-          Latest
-        </button>
-        <button
-          type="button"
-          [class.active]="mode() === 'date'"
-          (click)="setMode('date')"
-        >
-          On date
-        </button>
+      <div class="field field--mode">
+        <span>Snapshot</span>
+        <div class="segmented">
+          <button type="button" [class.active]="mode() === 'latest'" (click)="setMode('latest')">Latest</button>
+          <button type="button" [class.active]="mode() === 'date'" (click)="setMode('date')">On date</button>
+        </div>
       </div>
+
+      @if (mode() === 'date') {
+        <label class="field">
+          <span>Date</span>
+          <input type="date" [ngModel]="date()" name="date" [max]="maxDate" (ngModelChange)="date.set($event)" />
+        </label>
+      }
+
+      <label class="field">
+        <span>Sort by</span>
+        <select [ngModel]="sortKey()" name="sortKey" (ngModelChange)="sortKey.set($event)">
+          <option value="pickRate">Pick rate</option>
+          <option value="winRate">Win rate</option>
+          <option value="banRate">Ban rate</option>
+          <option value="heroName">Name</option>
+        </select>
+      </label>
     </div>
 
-    @if (mode() === 'date') {
-      <label class="field">
-        <span>Date</span>
-        <input
-          type="date"
-          [ngModel]="date()"
-          name="date"
-          [max]="maxDate"
-          (ngModelChange)="date.set($event)"
-        />
-      </label>
-    }
-
-    <label class="field field--search">
-      <span>Search</span>
+    <label class="search">
+      <svg class="search__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2" />
+        <path d="m20 20-3.5-3.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+      </svg>
       <input
         type="text"
         placeholder="Find a hero…"
@@ -94,25 +96,24 @@
         (ngModelChange)="search.set($event)"
       />
     </label>
-
-    <label class="field">
-      <span>Sort by</span>
-      <select [ngModel]="sortKey()" name="sortKey" (ngModelChange)="sortKey.set($event)">
-        <option value="pickRate">Pick rate</option>
-        <option value="winRate">Win rate</option>
-        <option value="banRate">Ban rate</option>
-        <option value="heroName">Name</option>
-      </select>
-    </label>
   </form>
 
-  <div class="summary">
+  <div class="stat-row">
     @if (snapshotDate(); as date) {
-      <span class="summary__item">Snapshot: <strong>{{ date }}</strong></span>
+      <div class="stat-chip">
+        <span class="stat-chip__label">Snapshot</span>
+        <span class="stat-chip__value">{{ date }}</span>
+      </div>
     }
-    <span class="summary__item">Heroes: <strong>{{ heroCount() }}</strong></span>
+    <div class="stat-chip">
+      <span class="stat-chip__label">Heroes</span>
+      <span class="stat-chip__value">{{ heroCount() }}</span>
+    </div>
     @if (averageWinRate(); as avg) {
-      <span class="summary__item">Avg win rate: <strong>{{ avg | number: '1.1-1' }}%</strong></span>
+      <div class="stat-chip">
+        <span class="stat-chip__label">Avg win rate</span>
+        <span class="stat-chip__value">{{ avg | number: '1.1-1' }}%</span>
+      </div>
     }
   </div>
 
@@ -136,4 +137,4 @@
       }
     </div>
   }
-</div>
+</main>
