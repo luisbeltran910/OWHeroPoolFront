@@ -7,7 +7,7 @@
 
   <div class="role-group__grid">
     @for (hero of heroes(); track hero.id) {
-      <app-hero-card [hero]="hero" />
+      <app-hero-card [hero]="hero" (select)="heroSelect.emit($event)" />
     }
   </div>
 </section>

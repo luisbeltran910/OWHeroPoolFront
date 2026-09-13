@@ -1,8 +1,11 @@
 @let h = hero();
 
-<article class="hero-card">
+<button type="button" class="hero-card" (click)="select.emit(h)">
   <header class="hero-card__header">
-    <span class="hero-card__name">{{ h.heroName }}</span>
+    <div class="hero-card__identity">
+      <app-hero-portrait [hero]="h" [size]="28" />
+      <span class="hero-card__name">{{ h.heroName }}</span>
+    </div>
     @if (h.subRole) {
       <span class="hero-card__sub-role">{{ h.subRole }}</span>
     }
@@ -26,4 +29,4 @@
       <dd>{{ h.banRate | number: '1.1-1' }}%</dd>
     </div>
   </dl>
-</article>
+</button>

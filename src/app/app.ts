@@ -1,9 +1,10 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { HeroDashboard } from './features/hero-dashboard/hero-dashboard';
+import { RouterOutlet } from '@angular/router';
+import { AppHeader } from './shared/app-header/app-header';
 
 @Component({
   selector: 'app-root',
-  imports: [HeroDashboard],
+  imports: [RouterOutlet, AppHeader],
   templateUrl: './app.html',
   styleUrl: './app.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

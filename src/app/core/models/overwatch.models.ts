@@ -40,6 +40,7 @@ export interface HeroSnapshot {
   snapshotDate: string;
   heroId: string;
   heroName: string;
+  portraitUrl: string | null;
   role: HeroRole;
   subRole: string | null;
   region: Region;

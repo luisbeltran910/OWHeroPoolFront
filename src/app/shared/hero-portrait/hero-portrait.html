@@ -1,0 +1,24 @@
+@let h = hero();
+
+@if (showImage()) {
+  <img
+    class="hero-portrait"
+    [style.width.px]="size()"
+    [style.height.px]="size()"
+    [src]="h.portraitUrl"
+    [alt]="h.heroName"
+    loading="lazy"
+    (error)="onImageError()"
+  />
+} @else {
+  <span
+    class="hero-portrait hero-portrait--placeholder"
+    [style.width.px]="size()"
+    [style.height.px]="size()"
+    [style.fontSize.px]="size() * 0.5"
+    [attr.data-role]="h.role"
+    aria-hidden="true"
+  >
+    {{ initial() }}
+  </span>
+}

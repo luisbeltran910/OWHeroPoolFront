@@ -1,0 +1,102 @@
+<main class="page">
+  <div class="picker-page__intro">
+    <h2>Counter Picker</h2>
+    <p>Blizzard has no live-match API, so pick who you're facing and see who beats them.</p>
+  </div>
+
+  <div class="toolbar">
+    <label class="field">
+      <span>Region</span>
+      <select [ngModel]="region()" (ngModelChange)="region.set($event)" name="region">
+        @for (r of regions; track r) {
+          <option [value]="r">{{ regionLabels[r] }}</option>
+        }
+      </select>
+    </label>
+
+    <label class="field">
+      <span>Tier</span>
+      <select [ngModel]="tier()" (ngModelChange)="tier.set($event)" name="tier">
+        @for (t of tiers; track t) {
+          <option [value]="t">{{ tierLabels[t] }}</option>
+        }
+      </select>
+    </label>
+
+    <label class="field">
+      <span>Input</span>
+      <select [ngModel]="inputType()" (ngModelChange)="inputType.set($event)" name="inputType">
+        @for (i of inputTypes; track i) {
+          <option [value]="i">{{ inputLabels[i] }}</option>
+        }
+      </select>
+    </label>
+  </div>
+
+  <div class="picker-layout">
+    <section class="picker-column">
+      <div class="picker-column__heading">
+        <h3>Enemy team</h3>
+        @if (selectedEnemies().length > 0) {
+          <button type="button" class="clear-btn" (click)="clearEnemies()">Clear</button>
+        }
+      </div>
+
+      @if (snapshots.isLoading()) {
+        <p class="picker-empty">Loading heroes…</p>
+      } @else {
+        @for (group of rosterByRole(); track group.role) {
+          <div class="enemy-role-group">
+            <span class="role-tag" [attr.data-role]="group.role">{{ roleLabels[group.role] }}</span>
+            <div class="enemy-chip-grid">
+              @for (hero of group.heroes; track hero.id) {
+                <button
+                  type="button"
+                  class="enemy-chip"
+                  [class.selected]="isSelected(hero)"
+                  (click)="toggleEnemy(hero)"
+                >
+                  <app-hero-portrait [hero]="hero" [size]="20" />
+                  {{ hero.heroName }}
+                </button>
+              }
+            </div>
+          </div>
+        }
+      }
+    </section>
+
+    <section class="picker-column">
+      <h3>Recommended picks</h3>
+
+      @if (selectedEnemies().length === 0) {
+        <p class="picker-empty">Select one or more enemy heroes to see recommendations.</p>
+      } @else if (rankedPicks().length === 0) {
+        <p class="picker-empty">No strong counters found for this combination in the current guide.</p>
+      } @else {
+        <ol class="pick-list">
+          @for (pick of rankedPicks(); track pick.hero.id) {
+            <li class="pick-row">
+              <div class="pick-row__main">
+                <app-hero-portrait [hero]="pick.hero" [size]="28" />
+                <span class="pick-row__name">{{ pick.hero.heroName }}</span>
+                <span class="role-tag" [attr.data-role]="pick.hero.role">{{ pick.hero.role }}</span>
+              </div>
+              <div class="pick-row__detail">
+                <span class="pick-row__good">Counters: {{ namesOf(pick.countered) }}</span>
+                @if (pick.counteredBy.length > 0) {
+                  <span class="pick-row__bad">Watch out for: {{ namesOf(pick.counteredBy) }}</span>
+                }
+              </div>
+            </li>
+          }
+        </ol>
+      }
+    </section>
+  </div>
+
+  <p class="disclaimer">
+    Community-sourced matchup guide (kill-trade data, not Blizzard's own stats) — a strategic
+    starting point, not a guarantee.
+  </p>
+</main>

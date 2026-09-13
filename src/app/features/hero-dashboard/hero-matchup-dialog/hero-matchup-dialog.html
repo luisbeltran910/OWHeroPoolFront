@@ -1,0 +1,73 @@
+@let h = hero();
+
+<div class="dialog-scrim" (click)="closed.emit()">
+  <div
+    class="dialog-panel"
+    role="dialog"
+    aria-modal="true"
+    [attr.aria-label]="h.heroName + ' matchups'"
+    (click)="$event.stopPropagation()"
+  >
+    <header class="dialog-panel__header">
+      <div class="dialog-panel__identity">
+        <app-hero-portrait [hero]="h" [size]="36" />
+        <div>
+          <h2 class="dialog-panel__title">{{ h.heroName }}</h2>
+          @if (h.subRole) {
+            <span class="dialog-panel__sub-role">{{ h.subRole }}</span>
+          }
+        </div>
+      </div>
+      <button type="button" class="dialog-panel__close" (click)="closed.emit()" aria-label="Close">✕</button>
+    </header>
+
+    <div class="dialog-panel__body">
+      <section class="matchup-section matchup-section--strong">
+        <h3>Strong against</h3>
+        @if (strongByRole().length === 0) {
+          <p class="matchup-section__empty">No clear counters found in the current roster.</p>
+        } @else {
+          @for (bucket of strongByRole(); track bucket.role) {
+            <div class="matchup-group">
+              <span class="role-tag" [attr.data-role]="bucket.role">{{ roleLabels[bucket.role] }}</span>
+              <div class="matchup-chips">
+                @for (hero of bucket.heroes; track hero.id) {
+                  <span class="matchup-chip">
+                    <app-hero-portrait [hero]="hero" [size]="18" />
+                    {{ hero.heroName }}
+                  </span>
+                }
+              </div>
+            </div>
+          }
+        }
+      </section>
+
+      <section class="matchup-section matchup-section--weak">
+        <h3>Countered by</h3>
+        @if (weakByRole().length === 0) {
+          <p class="matchup-section__empty">No clear counters found in the current roster.</p>
+        } @else {
+          @for (bucket of weakByRole(); track bucket.role) {
+            <div class="matchup-group">
+              <span class="role-tag" [attr.data-role]="bucket.role">{{ roleLabels[bucket.role] }}</span>
+              <div class="matchup-chips">
+                @for (hero of bucket.heroes; track hero.id) {
+                  <span class="matchup-chip">
+                    <app-hero-portrait [hero]="hero" [size]="18" />
+                    {{ hero.heroName }}
+                  </span>
+                }
+              </div>
+            </div>
+          }
+        }
+      </section>
+    </div>
+
+    <footer class="dialog-panel__footer">
+      Community-sourced matchup guide (kill-trade data, not Blizzard's own stats) — a
+      strategic starting point, not a guarantee.
+    </footer>
+  </div>
+</div>

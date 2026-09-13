@@ -2,67 +2,9 @@
   display: block;
 }
 
-.site-header {
-  position: sticky;
-  top: 0;
-  z-index: 20;
-  background: color-mix(in srgb, var(--bg-elevated) 85%, transparent);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-bottom: 1px solid var(--border);
-}
-
-.site-header__inner {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0.9rem 1.25rem;
+.page-actions {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-}
-
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 0.7rem;
-  min-width: 0;
-}
-
-.brand__mark {
-  flex-shrink: 0;
-  display: grid;
-  place-items: center;
-  width: 2.15rem;
-  height: 2.15rem;
-  border-radius: var(--radius-sm);
-  background: var(--accent-orange);
-  color: #1a1204;
-  font-weight: 800;
-  font-size: 0.8rem;
-  letter-spacing: 0.02em;
-}
-
-.brand__copy {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-  line-height: 1.25;
-}
-
-.brand__title {
-  font-size: 1.05rem;
-  font-weight: 700;
-  color: var(--text);
-  letter-spacing: -0.01em;
-}
-
-.brand__subtitle {
-  font-size: 0.78rem;
-  color: var(--text-muted);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  justify-content: flex-end;
 }
 
 .scrape-btn {
@@ -107,15 +49,6 @@
   }
 }
 
-.dashboard {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 1.5rem 1.25rem 3rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1.1rem;
-}
-
 .scrape-message {
   margin: 0;
   font-size: 0.85rem;
@@ -126,53 +59,11 @@
   }
 }
 
-.toolbar {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 1rem;
-  background: var(--bg-elevated);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 1rem;
-}
-
 .toolbar__filters {
   display: flex;
   flex-wrap: wrap;
   align-items: flex-end;
   gap: 0.9rem;
-}
-
-.field {
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
-  font-size: 0.72rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-  color: var(--text-muted);
-
-  select,
-  input {
-    background: var(--surface);
-    color: var(--text);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    padding: 0.45rem 0.6rem;
-    font-size: 0.85rem;
-    font-weight: 400;
-    text-transform: none;
-    letter-spacing: normal;
-    min-width: 8rem;
-
-    &:focus-visible {
-      outline: 2px solid var(--accent-blue);
-      outline-offset: 1px;
-    }
-  }
 }
 
 .segmented {

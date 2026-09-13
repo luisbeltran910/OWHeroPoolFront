@@ -1,0 +1,33 @@
+:host {
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+.hero-portrait {
+  border-radius: 50%;
+  object-fit: cover;
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+
+.hero-portrait--placeholder {
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  color: var(--text-muted);
+
+  &[data-role='TANK'] {
+    color: var(--tank);
+    border-color: var(--tank);
+  }
+
+  &[data-role='DAMAGE'] {
+    color: var(--damage);
+    border-color: var(--damage);
+  }
+
+  &[data-role='SUPPORT'] {
+    color: var(--support);
+    border-color: var(--support);
+  }
+}

@@ -3,8 +3,8 @@ import { httpResource } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { environment } from '../../../environments/environment';
+import { getHeroMatchups } from '../../core/data/hero-matchups';
 import {
-  HeroRole,
   HeroSnapshot,
   INPUT_LABELS,
   InputType,
@@ -15,6 +15,7 @@ import {
   Tier,
 } from '../../core/models/overwatch.models';
 import { HeroSnapshotService } from '../../core/services/hero-snapshot.service';
+import { HeroMatchupDialog } from './hero-matchup-dialog/hero-matchup-dialog';
 import { HeroRoleGroup } from './hero-role-group/hero-role-group';
 
 type SnapshotMode = 'latest' | 'date';
@@ -26,7 +27,7 @@ function todayIso(): string {
 
 @Component({
   selector: 'app-hero-dashboard',
-  imports: [FormsModule, DecimalPipe, HeroRoleGroup],
+  imports: [FormsModule, DecimalPipe, HeroRoleGroup, HeroMatchupDialog],
   templateUrl: './hero-dashboard.html',
   styleUrl: './hero-dashboard.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -98,10 +99,23 @@ export class HeroDashboard {
   protected readonly scrapeMessage = signal<string | null>(null);
   protected readonly scrapeError = signal(false);
 
-  protected readonly HeroRole = HeroRole;
+  protected readonly selectedHero = signal<HeroSnapshot | null>(null);
+  protected readonly selectedHeroMatchups = computed(() => {
+    const hero = this.selectedHero();
+    if (!hero) return null;
+    return getHeroMatchups(hero, this.snapshots.value() ?? []);
+  });
 
   protected setMode(mode: SnapshotMode): void {
     this.mode.set(mode);
+  }
+
+  protected openHero(hero: HeroSnapshot): void {
+    this.selectedHero.set(hero);
+  }
+
+  protected closeHero(): void {
+    this.selectedHero.set(null);
   }
 
   protected runScrape(): void {

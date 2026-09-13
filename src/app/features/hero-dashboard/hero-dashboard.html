@@ -1,13 +1,5 @@
-<header class="site-header">
-  <div class="site-header__inner">
-    <div class="brand">
-      <span class="brand__mark" aria-hidden="true">OW</span>
-      <div class="brand__copy">
-        <h1 class="brand__title">Hero Pool</h1>
-        <span class="brand__subtitle">Competitive pick, win &amp; ban rates</span>
-      </div>
-    </div>
-
+<main class="page">
+  <div class="page-actions">
     <button type="button" class="scrape-btn" [disabled]="scraping()" (click)="runScrape()">
       <svg class="scrape-btn__icon" [class.spin]="scraping()" viewBox="0 0 24 24" fill="none" aria-hidden="true">
         <path
@@ -21,9 +13,7 @@
       {{ scraping() ? 'Scraping…' : 'Run scrape now' }}
     </button>
   </div>
-</header>
 
-<main class="dashboard">
   @if (scrapeMessage(); as message) {
     <p class="scrape-message" [class.scrape-message--error]="scrapeError()">{{ message }}</p>
   }
@@ -133,8 +123,19 @@
   } @else {
     <div class="role-groups">
       @for (group of groupedByRole(); track group.role) {
-        <app-hero-role-group [role]="group.role" [heroes]="group.heroes" />
+        <app-hero-role-group [role]="group.role" [heroes]="group.heroes" (heroSelect)="openHero($event)" />
       }
     </div>
   }
 </main>
+
+@if (selectedHero(); as hero) {
+  @if (selectedHeroMatchups(); as matchups) {
+    <app-hero-matchup-dialog
+      [hero]="hero"
+      [strongAgainst]="matchups.strongAgainst"
+      [weakAgainst]="matchups.weakAgainst"
+      (closed)="closeHero()"
+    />
+  }
+}

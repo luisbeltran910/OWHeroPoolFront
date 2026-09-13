@@ -1,0 +1,76 @@
+.dialog-panel {
+  max-width: 30rem;
+  max-height: min(38rem, 90vh);
+}
+
+.dialog-panel__identity {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  min-width: 0;
+}
+
+.dialog-panel__sub-role {
+  display: block;
+  margin-top: 0.15rem;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+}
+
+.dialog-panel__body {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.matchup-section h3 {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  margin-bottom: 0.6rem;
+}
+
+.matchup-section--strong h3 {
+  color: var(--positive);
+}
+
+.matchup-section--weak h3 {
+  color: var(--negative);
+}
+
+.matchup-section__empty {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.matchup-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-bottom: 0.6rem;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.matchup-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.matchup-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.8rem;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.2rem 0.7rem 0.2rem 0.3rem;
+}
