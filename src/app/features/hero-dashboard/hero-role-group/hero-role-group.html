@@ -1,0 +1,13 @@
+<section class="role-group" [attr.data-role]="role()">
+  <h2 class="role-group__title">
+    <span class="role-group__dot" aria-hidden="true"></span>
+    {{ roleLabels[role()] }}
+    <span class="role-group__count">{{ heroes().length }}</span>
+  </h2>
+
+  <div class="role-group__grid">
+    @for (hero of heroes(); track hero.id) {
+      <app-hero-card [hero]="hero" />
+    }
+  </div>
+</section>

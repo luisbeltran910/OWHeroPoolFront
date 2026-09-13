@@ -1,0 +1,29 @@
+@let h = hero();
+
+<article class="hero-card">
+  <header class="hero-card__header">
+    <span class="hero-card__name">{{ h.heroName }}</span>
+    @if (h.subRole) {
+      <span class="hero-card__sub-role">{{ h.subRole }}</span>
+    }
+  </header>
+
+  <div class="hero-card__win-bar" aria-hidden="true">
+    <div class="hero-card__win-bar-fill" [class]="winRateTone()" [style.width.%]="h.winRate"></div>
+  </div>
+
+  <dl class="hero-card__stats">
+    <div class="hero-card__stat" [class]="winRateTone()">
+      <dt>Win</dt>
+      <dd>{{ h.winRate | number: '1.1-1' }}%</dd>
+    </div>
+    <div class="hero-card__stat">
+      <dt>Pick</dt>
+      <dd>{{ h.pickRate | number: '1.1-1' }}%</dd>
+    </div>
+    <div class="hero-card__stat">
+      <dt>Ban</dt>
+      <dd>{{ h.banRate | number: '1.1-1' }}%</dd>
+    </div>
+  </dl>
+</article>

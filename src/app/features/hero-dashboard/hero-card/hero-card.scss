@@ -1,0 +1,97 @@
+.hero-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 0.85rem 1rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+
+  &:hover {
+    background: var(--surface-hover);
+    border-color: var(--accent-orange-dim);
+  }
+}
+
+.hero-card__header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.hero-card__name {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hero-card__sub-role {
+  flex-shrink: 0;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+}
+
+.hero-card__win-bar {
+  height: 4px;
+  border-radius: 999px;
+  background: var(--border);
+  overflow: hidden;
+}
+
+.hero-card__win-bar-fill {
+  height: 100%;
+  border-radius: 999px;
+
+  &.positive {
+    background: var(--positive);
+  }
+
+  &.negative {
+    background: var(--negative);
+  }
+
+  &.neutral {
+    background: var(--neutral);
+  }
+}
+
+.hero-card__stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+}
+
+.hero-card__stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+
+  dt {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-muted);
+  }
+
+  dd {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+  }
+
+  &.positive dd {
+    color: var(--positive);
+  }
+
+  &.negative dd {
+    color: var(--negative);
+  }
+}

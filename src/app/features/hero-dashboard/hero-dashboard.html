@@ -1,0 +1,139 @@
+<div class="dashboard">
+  <header class="dashboard__header">
+    <div class="dashboard__title">
+      <h1>OW Hero Pool</h1>
+      <p class="dashboard__subtitle">Live pick / win / ban rates, straight from Blizzard's rates API.</p>
+    </div>
+
+    <button
+      type="button"
+      class="scrape-btn"
+      [disabled]="scraping()"
+      (click)="runScrape()"
+    >
+      @if (scraping()) {
+        Scraping…
+      } @else {
+        Run scrape now
+      }
+    </button>
+  </header>
+
+  @if (scrapeMessage(); as message) {
+    <p class="scrape-message" [class.scrape-message--error]="scrapeError()">{{ message }}</p>
+  }
+
+  <form class="filters" (submit)="$event.preventDefault()">
+    <label class="field">
+      <span>Region</span>
+      <select [ngModel]="region()" name="region" (ngModelChange)="region.set($event)">
+        @for (r of regions; track r) {
+          <option [value]="r">{{ regionLabels[r] }}</option>
+        }
+      </select>
+    </label>
+
+    <label class="field">
+      <span>Tier</span>
+      <select [ngModel]="tier()" name="tier" (ngModelChange)="tier.set($event)">
+        @for (t of tiers; track t) {
+          <option [value]="t">{{ tierLabels[t] }}</option>
+        }
+      </select>
+    </label>
+
+    <label class="field">
+      <span>Input</span>
+      <select [ngModel]="inputType()" name="inputType" (ngModelChange)="inputType.set($event)">
+        @for (i of inputTypes; track i) {
+          <option [value]="i">{{ inputLabels[i] }}</option>
+        }
+      </select>
+    </label>
+
+    <div class="field field--mode">
+      <span>Snapshot</span>
+      <div class="mode-toggle">
+        <button
+          type="button"
+          [class.active]="mode() === 'latest'"
+          (click)="setMode('latest')"
+        >
+          Latest
+        </button>
+        <button
+          type="button"
+          [class.active]="mode() === 'date'"
+          (click)="setMode('date')"
+        >
+          On date
+        </button>
+      </div>
+    </div>
+
+    @if (mode() === 'date') {
+      <label class="field">
+        <span>Date</span>
+        <input
+          type="date"
+          [ngModel]="date()"
+          name="date"
+          [max]="maxDate"
+          (ngModelChange)="date.set($event)"
+        />
+      </label>
+    }
+
+    <label class="field field--search">
+      <span>Search</span>
+      <input
+        type="text"
+        placeholder="Find a hero…"
+        [ngModel]="search()"
+        name="search"
+        (ngModelChange)="search.set($event)"
+      />
+    </label>
+
+    <label class="field">
+      <span>Sort by</span>
+      <select [ngModel]="sortKey()" name="sortKey" (ngModelChange)="sortKey.set($event)">
+        <option value="pickRate">Pick rate</option>
+        <option value="winRate">Win rate</option>
+        <option value="banRate">Ban rate</option>
+        <option value="heroName">Name</option>
+      </select>
+    </label>
+  </form>
+
+  <div class="summary">
+    @if (snapshotDate(); as date) {
+      <span class="summary__item">Snapshot: <strong>{{ date }}</strong></span>
+    }
+    <span class="summary__item">Heroes: <strong>{{ heroCount() }}</strong></span>
+    @if (averageWinRate(); as avg) {
+      <span class="summary__item">Avg win rate: <strong>{{ avg | number: '1.1-1' }}%</strong></span>
+    }
+  </div>
+
+  @if (snapshots.isLoading()) {
+    <p class="state-message">Loading hero data…</p>
+  } @else if (snapshots.error()) {
+    <p class="state-message state-message--error">
+      Couldn't reach the backend. Is it running on port 8080?
+    </p>
+  } @else if (heroCount() === 0) {
+    <p class="state-message">
+      No snapshot data yet for this combination — try "Run scrape now", or pick a different
+      region, tier or date.
+    </p>
+  } @else if (groupedByRole().length === 0) {
+    <p class="state-message">No heroes match "{{ search() }}".</p>
+  } @else {
+    <div class="role-groups">
+      @for (group of groupedByRole(); track group.role) {
+        <app-hero-role-group [role]="group.role" [heroes]="group.heroes" />
+      }
+    </div>
+  }
+</div>
