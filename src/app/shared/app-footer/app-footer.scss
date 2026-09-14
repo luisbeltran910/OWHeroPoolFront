@@ -41,6 +41,19 @@
   }
 }
 
+.site-footer__link {
+  flex-shrink: 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-decoration: none;
+
+  &:hover {
+    color: var(--text);
+    text-decoration: underline;
+  }
+}
+
 .site-footer__year {
   flex-shrink: 0;
   font-size: 0.75rem;

@@ -1,0 +1,33 @@
+:host {
+  display: block;
+}
+
+.legal-page {
+  max-width: 760px;
+
+  h2 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  h3 {
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--accent-orange);
+  }
+
+  p {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: var(--text-muted);
+  }
+}

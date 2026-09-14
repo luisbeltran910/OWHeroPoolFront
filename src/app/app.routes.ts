@@ -9,5 +9,9 @@ export const routes: Routes = [
     path: 'counter-picker',
     loadComponent: () => import('./features/counter-picker/counter-picker-page').then((m) => m.CounterPickerPage),
   },
+  {
+    path: 'legal',
+    loadComponent: () => import('./features/legal/legal-page').then((m) => m.LegalPage),
+  },
   { path: '**', redirectTo: '' },
 ];

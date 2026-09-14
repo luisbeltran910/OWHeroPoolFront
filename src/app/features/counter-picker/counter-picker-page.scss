@@ -70,15 +70,24 @@
 }
 
 .clear-btn {
-  background: none;
-  border: none;
-  color: var(--accent-blue);
-  font-size: 0.75rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.3rem 0.7rem;
   cursor: pointer;
-  padding: 0;
+  transition: border-color 0.15s ease, color 0.15s ease;
 
   &:hover {
-    text-decoration: underline;
+    border-color: var(--negative);
+    color: var(--negative);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--accent-blue);
+    outline-offset: 2px;
   }
 }
 
@@ -150,8 +159,8 @@
   list-style: none;
   margin: 0;
   padding: 0;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: 0.5rem;
 }
 
@@ -160,6 +169,7 @@
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
+  min-width: 0;
 }
 
 .pick-row__main {
@@ -173,6 +183,9 @@
   min-width: 0;
   font-weight: 700;
   color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .pick-row__detail {
