@@ -32,16 +32,6 @@
       </select>
     </label>
 
-    <label class="field">
-      <span>Map</span>
-      <select [ngModel]="selectedMap()" (ngModelChange)="selectedMap.set($event)" name="map">
-        <option value="">All Maps</option>
-        @for (m of availableMaps(); track m.map) {
-          <option [value]="m.map">{{ m.mapName }}</option>
-        }
-      </select>
-    </label>
-
     <div class="field">
       <span>Mode</span>
       <div class="segmented">
@@ -69,6 +59,33 @@
         <button type="button" [class.active]="format() === '6v6'" (click)="setFormat('6v6')">6v6</button>
       </div>
     </div>
+  </div>
+
+  <div class="map-filter-bar">
+    @if (mapFilterOpen()) {
+      <label class="field field--map">
+        <span>Map</span>
+        <select
+          [ngModel]="selectedMap()"
+          (ngModelChange)="chooseMap($event)"
+          (blur)="mapFilterOpen.set(false)"
+          name="map"
+        >
+          <option value="">All Maps</option>
+          @for (m of availableMaps(); track m.map) {
+            <option [value]="m.map">{{ m.mapName }}</option>
+          }
+        </select>
+      </label>
+    } @else {
+      <button type="button" class="map-toggle" (click)="toggleMapFilter()">
+        <span class="map-toggle__label">Map:</span>
+        <span class="map-toggle__value">{{ selectedMapName() }}</span>
+        @if (selectedMap()) {
+          <span class="map-toggle__clear" (click)="clearMap($event)">✕</span>
+        }
+      </button>
+    }
   </div>
 
   <div class="picker-layout">

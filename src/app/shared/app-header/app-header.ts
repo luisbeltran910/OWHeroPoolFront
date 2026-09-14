@@ -5,7 +5,7 @@ import { AppLogo } from '../app-logo/app-logo';
 interface NavLink {
   path: string;
   label: string;
-  icon: 'dashboard' | 'target';
+  icon: 'dashboard' | 'target' | 'pool';
   /** Whether routerLinkActive should require an exact path match (e.g. '/' vs a prefix). */
   exact: boolean;
 }
@@ -21,5 +21,6 @@ export class AppHeader {
   protected readonly navLinks: readonly NavLink[] = [
     { path: '/', label: 'Dashboard', icon: 'dashboard', exact: true },
     { path: '/counter-picker', label: 'Counter Picker', icon: 'target', exact: false },
+    { path: '/hero-pool', label: 'Hero Pool', icon: 'pool', exact: false },
   ];
 }

@@ -25,6 +25,10 @@ export const HERO_TOP_PERKS: Readonly<Record<string, HeroTopPerks>> = {
   brigitte: { minor: { name: 'Morale Boost', percent: 80 }, major: { name: 'Inspiring Strike', percent: 87 } },
   cassidy: { minor: { name: 'Bang Bang', percent: 67 }, major: { name: 'Silver Bullet', percent: 91 } },
   dmon: { minor: { name: 'Beast Within', percent: 63 }, major: { name: 'Focused Fusion', percent: 53 } },
+  // Doctrine isn't in Blizzard's own rates API yet (Season 5 release, currently a Quick Play
+  // hero trial only), so she won't appear anywhere else in this app until Blizzard adds her —
+  // this entry is just ready for when she does.
+  doctrine: { minor: { name: 'Sanguine Siphon', percent: 54 }, major: { name: 'Transfusion', percent: 87 } },
   domina: { minor: { name: 'Extended Power', percent: 70 }, major: { name: 'Corporate Retreat', percent: 72 } },
   doomfist: { minor: { name: 'Survival of the Fittest', percent: 59 }, major: { name: 'Power Matrix', percent: 89 } },
   dva: { minor: { name: 'Extended Boosters', percent: 85 }, major: { name: 'Shield System', percent: 72 } },

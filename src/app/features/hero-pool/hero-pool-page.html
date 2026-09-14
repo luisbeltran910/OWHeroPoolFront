@@ -1,0 +1,173 @@
+<main class="page">
+  <div class="picker-page__intro">
+    <h2>Hero Pool</h2>
+    <p>Pick up to {{ maxPoolSize }} heroes you play and see which maps favor your pool.</p>
+  </div>
+
+  <div class="toolbar">
+    <label class="field">
+      <span>Region</span>
+      <select [ngModel]="region()" (ngModelChange)="region.set($event)" name="region">
+        @for (r of regions; track r) {
+          <option [value]="r">{{ regionLabels[r] }}</option>
+        }
+      </select>
+    </label>
+
+    <label class="field">
+      <span>Tier</span>
+      <select [ngModel]="tier()" (ngModelChange)="tier.set($event)" name="tier">
+        @for (t of tiers; track t) {
+          <option [value]="t">{{ tierLabels[t] }}</option>
+        }
+      </select>
+    </label>
+
+    <label class="field">
+      <span>Input</span>
+      <select [ngModel]="inputType()" (ngModelChange)="inputType.set($event)" name="inputType">
+        @for (i of inputTypes; track i) {
+          <option [value]="i">{{ inputLabels[i] }}</option>
+        }
+      </select>
+    </label>
+
+    <div class="field">
+      <span>Mode</span>
+      <div class="segmented">
+        <button
+          type="button"
+          [class.active]="queue() === GameQueue.QuickPlay"
+          (click)="queue.set(GameQueue.QuickPlay)"
+        >
+          {{ queueLabels[GameQueue.QuickPlay] }}
+        </button>
+        <button
+          type="button"
+          [class.active]="queue() === GameQueue.Competitive"
+          (click)="queue.set(GameQueue.Competitive)"
+        >
+          {{ queueLabels[GameQueue.Competitive] }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="picker-layout">
+    <section class="picker-column">
+      <div class="picker-column__heading">
+        <h3>Your pool</h3>
+        <div class="picker-column__heading-actions">
+          <span class="picker-count">{{ selectedHeroes().length }} / {{ maxPoolSize }} selected</span>
+          @if (selectedHeroes().length > 0) {
+            <button type="button" class="clear-btn" (click)="clearPool()">Clear</button>
+          }
+        </div>
+      </div>
+
+      @if (snapshots.isLoading()) {
+        <p class="picker-empty">Loading heroes…</p>
+      } @else {
+        @for (group of rosterByRole(); track group.role) {
+          <div class="enemy-role-group">
+            <span class="role-tag" [attr.data-role]="group.role">{{ roleLabels[group.role] }}</span>
+            <div class="enemy-chip-grid">
+              @for (hero of group.heroes; track hero.id) {
+                <button
+                  type="button"
+                  class="enemy-chip"
+                  [class.selected]="isSelected(hero)"
+                  [disabled]="!isSelected(hero) && isPoolFull()"
+                  (click)="toggleHero(hero)"
+                >
+                  <app-hero-portrait [hero]="hero" [size]="20" />
+                  {{ hero.heroName }}
+                </button>
+              }
+            </div>
+          </div>
+        }
+      }
+    </section>
+
+    <section class="picker-column">
+      @if (selectedHeroes().length === 0) {
+        <h3>Recommended picks</h3>
+        @if (snapshots.isLoading()) {
+          <p class="picker-empty">Loading heroes…</p>
+        } @else {
+          <p class="picker-empty">Nothing selected yet — here's who's performing best by role right now.</p>
+          @for (group of recommendedByRole(); track group.role) {
+            <div class="enemy-role-group">
+              <span class="role-tag" [attr.data-role]="group.role">{{ roleLabels[group.role] }}</span>
+              <div class="enemy-chip-grid">
+                @for (hero of group.heroes; track hero.id) {
+                  <button type="button" class="enemy-chip" (click)="toggleHero(hero)">
+                    <app-hero-portrait [hero]="hero" [size]="20" />
+                    {{ hero.heroName }}
+                    <span class="enemy-chip__rate">{{ hero.winRate | number: '1.1-1' }}%</span>
+                  </button>
+                }
+              </div>
+            </div>
+          }
+        }
+      } @else {
+        <h3>Best maps for your pool</h3>
+
+        @if (poolMapStats().length === 0) {
+          <p class="picker-empty">No map data yet for this pool.</p>
+        } @else {
+          <div class="map-stat-list">
+            @for (m of bestMaps(); track m.map) {
+              <div class="map-stat-row">
+                <span class="map-stat-row__name">{{ m.mapName }}</span>
+                <span class="map-stat-row__rate map-stat-row__rate--good">{{ m.avgWinRate | number: '1.1-1' }}%</span>
+              </div>
+            }
+          </div>
+
+          <h3 class="picker-column__subheading">Worst maps for your pool</h3>
+          <div class="map-stat-list">
+            @for (m of worstMaps(); track m.map) {
+              <div class="map-stat-row">
+                <span class="map-stat-row__name">{{ m.mapName }}</span>
+                <span class="map-stat-row__rate map-stat-row__rate--bad">{{ m.avgWinRate | number: '1.1-1' }}%</span>
+              </div>
+            }
+          </div>
+
+          <p class="map-stat-note">
+            Average of each selected hero's win rate on that map (Blizzard's own data, all ranks).
+          </p>
+        }
+
+        <h3 class="picker-column__subheading">Your heroes</h3>
+        <ul class="hero-stat-list">
+          @for (hero of selectedHeroes(); track hero.id) {
+            <li class="hero-stat-row">
+              <div class="hero-stat-row__main">
+                <app-hero-portrait [hero]="hero" [size]="28" />
+                <span class="hero-stat-row__name">{{ hero.heroName }}</span>
+              </div>
+              <div class="hero-stat-row__numbers">
+                <span>Win {{ hero.winRate | number: '1.1-1' }}%</span>
+                <span>Pick {{ hero.pickRate | number: '1.1-1' }}%</span>
+                <span>Ban {{ hero.banRate | number: '1.1-1' }}%</span>
+              </div>
+              @if (topPerksFor(hero.heroId); as perks) {
+                <div class="hero-stat-row__perks">
+                  <span class="perk-line__tag">Minor</span>
+                  <span>{{ perks.minor.name }}</span>
+                  <span class="perk-line__tag">Major</span>
+                  <span>{{ perks.major.name }}</span>
+                </div>
+              }
+            </li>
+          }
+        </ul>
+        <p class="map-stat-note">Top perk picks are a visitor vote poll (owperks.com), not real match data.</p>
+      }
+    </section>
+  </div>
+</main>

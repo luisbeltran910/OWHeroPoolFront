@@ -58,6 +58,8 @@ export class CounterPickerPage {
   protected readonly queue = signal<GameQueue>(GameQueue.Competitive);
   /** Empty string is the "All Maps" sentinel, since a native <select> needs a string value. */
   protected readonly selectedMap = signal<string>('');
+  /** The map select starts collapsed behind a toggle button — the toolbar was getting crowded. */
+  protected readonly mapFilterOpen = signal(false);
 
   protected readonly snapshots = httpResource<HeroSnapshot[]>(
     () => ({
@@ -97,6 +99,26 @@ export class CounterPickerPage {
     const map = this.selectedMap();
     if (!map) return undefined;
     return this.heroMaps.value().find((m) => m.heroId === heroId && m.map === map)?.winRate;
+  }
+
+  protected readonly selectedMapName = computed(() => {
+    const map = this.selectedMap();
+    if (!map) return 'All Maps';
+    return this.availableMaps().find((m) => m.map === map)?.mapName ?? 'All Maps';
+  });
+
+  protected toggleMapFilter(): void {
+    this.mapFilterOpen.update((open) => !open);
+  }
+
+  protected chooseMap(map: string): void {
+    this.selectedMap.set(map);
+    this.mapFilterOpen.set(false);
+  }
+
+  protected clearMap(event: Event): void {
+    event.stopPropagation();
+    this.selectedMap.set('');
   }
 
   protected readonly rosterByRole = computed(() => {

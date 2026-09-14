@@ -184,6 +184,24 @@ button {
   gap: 1.1rem;
 }
 
+/* Shared routed-page heading block (counter-picker-page, hero-pool-page). */
+.picker-page__intro {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+
+  h2 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  p {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+  }
+}
+
 /* Shared filter toolbar (hero-dashboard, counter-picker-page). */
 .toolbar {
   display: flex;
@@ -225,6 +243,132 @@ button {
       outline-offset: 1px;
     }
   }
+}
+
+/* Shared two-column picker layout (counter-picker-page, hero-pool-page): a selection grid on
+   the left, results on the right. */
+.picker-layout {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 1.5rem;
+  align-items: start;
+
+  @media (max-width: 720px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.picker-column {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  min-width: 0;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.1rem;
+
+  h3 {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--text);
+  }
+}
+
+.picker-column__heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.picker-column__heading-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.picker-count {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.clear-btn {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.3rem 0.7rem;
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease;
+
+  &:hover {
+    border-color: var(--negative);
+    color: var(--negative);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--accent-blue);
+    outline-offset: 2px;
+  }
+}
+
+.enemy-role-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.enemy-chip-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.enemy-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.25rem 0.75rem 0.25rem 0.35rem;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+
+  &:hover {
+    border-color: var(--accent-orange-dim);
+  }
+
+  &.selected {
+    background: var(--negative);
+    border-color: var(--negative);
+    color: #2a0a0e;
+    font-weight: 600;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--accent-blue);
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+}
+
+.picker-empty {
+  font-size: 0.85rem;
+  color: var(--text-muted);
 }
 
 /* Shared pill-style toggle (hero-dashboard's Latest/On-date, counter-picker's 5v5/6v6). */

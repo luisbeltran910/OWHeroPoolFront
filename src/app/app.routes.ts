@@ -10,6 +10,10 @@ export const routes: Routes = [
     loadComponent: () => import('./features/counter-picker/counter-picker-page').then((m) => m.CounterPickerPage),
   },
   {
+    path: 'hero-pool',
+    loadComponent: () => import('./features/hero-pool/hero-pool-page').then((m) => m.HeroPoolPage),
+  },
+  {
     path: 'legal',
     loadComponent: () => import('./features/legal/legal-page').then((m) => m.LegalPage),
   },
