@@ -31,15 +31,26 @@
         }
       </select>
     </label>
+
+    <div class="field">
+      <span>Format</span>
+      <div class="segmented">
+        <button type="button" [class.active]="format() === '5v5'" (click)="setFormat('5v5')">5v5</button>
+        <button type="button" [class.active]="format() === '6v6'" (click)="setFormat('6v6')">6v6</button>
+      </div>
+    </div>
   </div>
 
   <div class="picker-layout">
     <section class="picker-column">
       <div class="picker-column__heading">
         <h3>Enemy team</h3>
-        @if (selectedEnemies().length > 0) {
-          <button type="button" class="clear-btn" (click)="clearEnemies()">Clear</button>
-        }
+        <div class="picker-column__heading-actions">
+          <span class="picker-count">{{ selectedEnemies().length }} / {{ maxEnemies() }} selected</span>
+          @if (selectedEnemies().length > 0) {
+            <button type="button" class="clear-btn" (click)="clearEnemies()">Clear</button>
+          }
+        </div>
       </div>
 
       @if (snapshots.isLoading()) {
@@ -47,13 +58,17 @@
       } @else {
         @for (group of rosterByRole(); track group.role) {
           <div class="enemy-role-group">
-            <span class="role-tag" [attr.data-role]="group.role">{{ roleLabels[group.role] }}</span>
+            <span class="role-tag" [attr.data-role]="group.role">
+              {{ roleLabels[group.role] }}
+              <span class="role-tag__count">{{ selectedCountByRole()[group.role] }}/{{ roleCaps()[group.role] }}</span>
+            </span>
             <div class="enemy-chip-grid">
               @for (hero of group.heroes; track hero.id) {
                 <button
                   type="button"
                   class="enemy-chip"
                   [class.selected]="isSelected(hero)"
+                  [disabled]="!isSelected(hero) && isRoleFull(hero.role)"
                   (click)="toggleEnemy(hero)"
                 >
                   <app-hero-portrait [hero]="hero" [size]="20" />
@@ -74,23 +89,27 @@
       } @else if (rankedPicks().length === 0) {
         <p class="picker-empty">No strong counters found for this combination in the current guide.</p>
       } @else {
-        <ol class="pick-list">
-          @for (pick of rankedPicks(); track pick.hero.id) {
-            <li class="pick-row">
-              <div class="pick-row__main">
-                <app-hero-portrait [hero]="pick.hero" [size]="28" />
-                <span class="pick-row__name">{{ pick.hero.heroName }}</span>
-                <span class="role-tag" [attr.data-role]="pick.hero.role">{{ pick.hero.role }}</span>
-              </div>
-              <div class="pick-row__detail">
-                <span class="pick-row__good">Counters: {{ namesOf(pick.countered) }}</span>
-                @if (pick.counteredBy.length > 0) {
-                  <span class="pick-row__bad">Watch out for: {{ namesOf(pick.counteredBy) }}</span>
-                }
-              </div>
-            </li>
-          }
-        </ol>
+        @for (group of pickedByRole(); track group.role) {
+          <div class="recommend-role-group">
+            <span class="role-tag" [attr.data-role]="group.role">{{ roleLabels[group.role] }}</span>
+            <ol class="pick-list">
+              @for (pick of group.picks; track pick.hero.id) {
+                <li class="pick-row">
+                  <div class="pick-row__main">
+                    <app-hero-portrait [hero]="pick.hero" [size]="28" />
+                    <span class="pick-row__name">{{ pick.hero.heroName }}</span>
+                  </div>
+                  <div class="pick-row__detail">
+                    <span class="pick-row__good">Counters: {{ namesOf(pick.countered) }}</span>
+                    @if (pick.counteredBy.length > 0) {
+                      <span class="pick-row__bad">Watch out for: {{ namesOf(pick.counteredBy) }}</span>
+                    }
+                  </div>
+                </li>
+              }
+            </ol>
+          </div>
+        }
       }
     </section>
   </div>

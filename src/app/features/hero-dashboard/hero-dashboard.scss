@@ -66,34 +66,6 @@
   gap: 0.9rem;
 }
 
-.segmented {
-  display: flex;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  overflow: hidden;
-
-  button {
-    background: var(--surface);
-    color: var(--text-muted);
-    border: none;
-    padding: 0.45rem 0.8rem;
-    font-size: 0.85rem;
-    font-weight: 400;
-    cursor: pointer;
-    transition: background-color 0.15s ease, color 0.15s ease;
-
-    &:hover:not(.active) {
-      color: var(--text);
-    }
-
-    &.active {
-      background: var(--accent-orange);
-      color: #1a1204;
-      font-weight: 600;
-    }
-  }
-}
-
 .search {
   display: flex;
   align-items: center;
