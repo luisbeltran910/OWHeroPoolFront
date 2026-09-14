@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { environment } from '../../../environments/environment';
 import { getHeroMatchups } from '../../core/data/hero-matchups';
 import {
+  HeroMapSnapshot,
   HeroSnapshot,
   INPUT_LABELS,
   InputType,
@@ -104,6 +105,30 @@ export class HeroDashboard {
     const hero = this.selectedHero();
     if (!hero) return null;
     return getHeroMatchups(hero, this.snapshots.value() ?? []);
+  });
+
+  /** Only fetches once a hero dialog is open, and refetches if the dashboard's region changes. */
+  protected readonly heroMaps = httpResource<HeroMapSnapshot[]>(
+    () => {
+      if (!this.selectedHero()) return undefined;
+      return {
+        url: `${environment.apiUrl}/api/maps/latest`,
+        params: { region: this.region() },
+      };
+    },
+    {
+      defaultValue: [],
+      parse: (raw) => (raw ?? []) as HeroMapSnapshot[],
+    },
+  );
+
+  protected readonly selectedHeroMaps = computed(() => {
+    const hero = this.selectedHero();
+    if (!hero) return [];
+    return this.heroMaps
+      .value()
+      .filter((m) => m.heroId === hero.heroId)
+      .sort((a, b) => b.winRate - a.winRate);
   });
 
   protected setMode(mode: SnapshotMode): void {

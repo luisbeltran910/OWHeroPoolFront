@@ -32,6 +32,36 @@
       </select>
     </label>
 
+    <label class="field">
+      <span>Map</span>
+      <select [ngModel]="selectedMap()" (ngModelChange)="selectedMap.set($event)" name="map">
+        <option value="">All Maps</option>
+        @for (m of availableMaps(); track m.map) {
+          <option [value]="m.map">{{ m.mapName }}</option>
+        }
+      </select>
+    </label>
+
+    <div class="field">
+      <span>Mode</span>
+      <div class="segmented">
+        <button
+          type="button"
+          [class.active]="queue() === GameQueue.QuickPlay"
+          (click)="queue.set(GameQueue.QuickPlay)"
+        >
+          {{ queueLabels[GameQueue.QuickPlay] }}
+        </button>
+        <button
+          type="button"
+          [class.active]="queue() === GameQueue.Competitive"
+          (click)="queue.set(GameQueue.Competitive)"
+        >
+          {{ queueLabels[GameQueue.Competitive] }}
+        </button>
+      </div>
+    </div>
+
     <div class="field">
       <span>Format</span>
       <div class="segmented">
@@ -95,16 +125,81 @@
             <ol class="pick-list">
               @for (pick of group.picks; track pick.hero.id) {
                 <li class="pick-row">
-                  <div class="pick-row__main">
-                    <app-hero-portrait [hero]="pick.hero" [size]="28" />
-                    <span class="pick-row__name">{{ pick.hero.heroName }}</span>
-                  </div>
-                  <div class="pick-row__detail">
-                    <span class="pick-row__good">Counters: {{ namesOf(pick.countered) }}</span>
-                    @if (pick.counteredBy.length > 0) {
-                      <span class="pick-row__bad">Watch out for: {{ namesOf(pick.counteredBy) }}</span>
+                  <button
+                    type="button"
+                    class="pick-row__toggle"
+                    [attr.aria-expanded]="isPickExpanded(pick.hero.heroId)"
+                    (click)="togglePick(pick.hero.heroId)"
+                  >
+                    <div class="pick-row__main">
+                      <app-hero-portrait [hero]="pick.hero" [size]="28" />
+                      <span class="pick-row__name">{{ pick.hero.heroName }}</span>
+                      <span class="pick-row__chevron" [class.open]="isPickExpanded(pick.hero.heroId)">⌄</span>
+                    </div>
+                    <div class="pick-row__detail">
+                      <span class="pick-row__good">Counters: {{ namesOf(pick.countered) }}</span>
+                      @if (pick.counteredBy.length > 0) {
+                        <span class="pick-row__bad">Watch out for: {{ namesOf(pick.counteredBy) }}</span>
+                      }
+                      @if (pick.mapWinRate !== undefined) {
+                        <span class="pick-row__map-rate">
+                          Win rate on this map: {{ pick.mapWinRate | number: '1.1-1' }}%
+                        </span>
+                      }
+                    </div>
+                  </button>
+
+                  @if (isPickExpanded(pick.hero.heroId)) {
+                    @if (topPerksFor(pick.hero.heroId); as perks) {
+                      <div class="pick-row__perks">
+                        <span class="pick-row__perks-label">Top perk picks</span>
+                        <div class="perk-line">
+                          <span class="perk-line__tag">Minor</span>
+                          <span class="perk-line__name">{{ perks.minor.name }}</span>
+                          <span class="perk-line__percent">{{ perks.minor.percent }}%</span>
+                        </div>
+                        <div class="perk-line">
+                          <span class="perk-line__tag">Major</span>
+                          <span class="perk-line__name">{{ perks.major.name }}</span>
+                          <span class="perk-line__percent">{{ perks.major.percent }}%</span>
+                        </div>
+                        <p class="pick-row__perks-note">
+                          Community vote share (owperks.com), not real match pick rates.
+                        </p>
+                      </div>
+                    } @else {
+                      <p class="pick-row__perks-note pick-row__perks-note--empty">No perk data for this hero yet.</p>
                     }
-                  </div>
+
+                    <div class="pick-row__maps">
+                      <div class="map-col">
+                        <span class="map-col__label map-col__label--good">Best maps</span>
+                        @if (bestMapsFor(pick.hero.heroId).length === 0) {
+                          <p class="pick-row__perks-note">No map data yet.</p>
+                        } @else {
+                          @for (m of bestMapsFor(pick.hero.heroId); track m.map) {
+                            <div class="map-row">
+                              <span class="map-row__name">{{ m.mapName }}</span>
+                              <span class="map-row__rate map-row__rate--good">{{ m.winRate | number: '1.1-1' }}%</span>
+                            </div>
+                          }
+                        }
+                      </div>
+                      <div class="map-col">
+                        <span class="map-col__label map-col__label--bad">Worst maps</span>
+                        @if (worstMapsFor(pick.hero.heroId).length === 0) {
+                          <p class="pick-row__perks-note">No map data yet.</p>
+                        } @else {
+                          @for (m of worstMapsFor(pick.hero.heroId); track m.map) {
+                            <div class="map-row">
+                              <span class="map-row__name">{{ m.mapName }}</span>
+                              <span class="map-row__rate map-row__rate--bad">{{ m.winRate | number: '1.1-1' }}%</span>
+                            </div>
+                          }
+                        }
+                      </div>
+                    </div>
+                  }
                 </li>
               }
             </ol>
@@ -116,6 +211,8 @@
 
   <p class="disclaimer">
     Community-sourced matchup guide (kill-trade data, not Blizzard's own stats) — a strategic
-    starting point, not a guarantee.
+    starting point, not a guarantee. Picking a map re-ranks ties by that hero's win rate on it
+    (Blizzard's own data). Perk picks (tap a recommendation) are a visitor vote poll from
+    owperks.com, not real match data.
   </p>
 </main>

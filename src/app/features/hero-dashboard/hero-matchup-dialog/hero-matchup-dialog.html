@@ -63,11 +63,43 @@
           }
         }
       </section>
+      <section class="matchup-section matchup-section--strong">
+        <h3>Best maps</h3>
+        @if (bestMaps().length === 0) {
+          <p class="matchup-section__empty">No map data yet — try running a map scrape.</p>
+        } @else {
+          <div class="map-rows">
+            @for (m of bestMaps(); track m.map) {
+              <div class="map-row">
+                <span class="map-row__name">{{ m.mapName }}</span>
+                <span class="map-row__rate map-row__rate--good">{{ m.winRate | number: '1.1-1' }}%</span>
+              </div>
+            }
+          </div>
+        }
+      </section>
+
+      <section class="matchup-section matchup-section--weak">
+        <h3>Worst maps</h3>
+        @if (worstMaps().length === 0) {
+          <p class="matchup-section__empty">No map data yet — try running a map scrape.</p>
+        } @else {
+          <div class="map-rows">
+            @for (m of worstMaps(); track m.map) {
+              <div class="map-row">
+                <span class="map-row__name">{{ m.mapName }}</span>
+                <span class="map-row__rate map-row__rate--bad">{{ m.winRate | number: '1.1-1' }}%</span>
+              </div>
+            }
+          </div>
+        }
+      </section>
     </div>
 
     <footer class="dialog-panel__footer">
-      Community-sourced matchup guide (kill-trade data, not Blizzard's own stats) — a
-      strategic starting point, not a guarantee.
+      Strong/countered by: community-sourced matchup guide (kill-trade data, not Blizzard's own
+      stats) — a strategic starting point, not a guarantee. Best/worst maps: Blizzard's own win
+      rates, All Ranks/PC only regardless of the tier filter above.
     </footer>
   </div>
 </div>

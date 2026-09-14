@@ -1,9 +1,14 @@
+import { DecimalPipe } from '@angular/common';
 import { httpResource } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { environment } from '../../../environments/environment';
 import { rankCounterPicks } from '../../core/data/counter-picker';
+import { HERO_TOP_PERKS, HeroTopPerks } from '../../core/data/perk-picks';
 import {
+  GAME_QUEUE_LABELS,
+  GameQueue,
+  HeroMapSnapshot,
   HeroRole,
   HeroSnapshot,
   INPUT_LABELS,
@@ -31,7 +36,7 @@ function emptyRoleCounts(): Record<HeroRole, number> {
 
 @Component({
   selector: 'app-counter-picker-page',
-  imports: [FormsModule, HeroPortrait],
+  imports: [FormsModule, HeroPortrait, DecimalPipe],
   templateUrl: './counter-picker-page.html',
   styleUrl: './counter-picker-page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -44,21 +49,55 @@ export class CounterPickerPage {
   protected readonly tierLabels = TIER_LABELS;
   protected readonly inputLabels = INPUT_LABELS;
   protected readonly roleLabels = ROLE_LABELS;
+  protected readonly queueLabels = GAME_QUEUE_LABELS;
+  protected readonly GameQueue = GameQueue;
 
   protected readonly region = signal<Region>(Region.Americas);
   protected readonly tier = signal<Tier>(Tier.All);
   protected readonly inputType = signal<InputType>(InputType.Pc);
+  protected readonly queue = signal<GameQueue>(GameQueue.Competitive);
+  /** Empty string is the "All Maps" sentinel, since a native <select> needs a string value. */
+  protected readonly selectedMap = signal<string>('');
 
   protected readonly snapshots = httpResource<HeroSnapshot[]>(
     () => ({
       url: `${environment.apiUrl}/api/snapshots/latest`,
-      params: { region: this.region(), tier: this.tier(), input: this.inputType() },
+      params: { region: this.region(), tier: this.tier(), input: this.inputType(), queue: this.queue() },
     }),
     {
       defaultValue: [],
       parse: (raw) => (raw ?? []) as HeroSnapshot[],
     },
   );
+
+  /** Independent of the enemy team — only depends on region, same as the roster fetch. */
+  protected readonly heroMaps = httpResource<HeroMapSnapshot[]>(
+    () => ({
+      url: `${environment.apiUrl}/api/maps/latest`,
+      params: { region: this.region() },
+    }),
+    {
+      defaultValue: [],
+      parse: (raw) => (raw ?? []) as HeroMapSnapshot[],
+    },
+  );
+
+  /** Distinct maps we actually have data for, derived from the map fetch itself. */
+  protected readonly availableMaps = computed(() => {
+    const seen = new Map<string, string>();
+    for (const m of this.heroMaps.value()) {
+      if (!seen.has(m.map)) seen.set(m.map, m.mapName);
+    }
+    return Array.from(seen, ([map, mapName]) => ({ map, mapName })).sort((a, b) =>
+      a.mapName.localeCompare(b.mapName),
+    );
+  });
+
+  protected mapWinRateFor(heroId: string): number | undefined {
+    const map = this.selectedMap();
+    if (!map) return undefined;
+    return this.heroMaps.value().find((m) => m.heroId === heroId && m.map === map)?.winRate;
+  }
 
   protected readonly rosterByRole = computed(() => {
     const roster = this.snapshots.value();
@@ -86,9 +125,14 @@ export class CounterPickerPage {
     return counts;
   });
 
-  protected readonly rankedPicks = computed(() =>
-    rankCounterPicks(this.selectedEnemies(), this.snapshots.value()),
-  );
+  protected readonly rankedPicks = computed(() => {
+    const map = this.selectedMap();
+    return rankCounterPicks(
+      this.selectedEnemies(),
+      this.snapshots.value(),
+      map ? (heroId) => this.mapWinRateFor(heroId) : undefined,
+    );
+  });
 
   private static readonly MAX_PICKS_PER_ROLE = 6;
 
@@ -146,5 +190,45 @@ export class CounterPickerPage {
 
   protected namesOf(heroes: readonly HeroSnapshot[]): string {
     return heroes.map((h) => h.heroName).join(', ');
+  }
+
+  private readonly expandedPicks = signal<ReadonlySet<string>>(new Set());
+
+  protected isPickExpanded(heroId: string): boolean {
+    return this.expandedPicks().has(heroId);
+  }
+
+  protected togglePick(heroId: string): void {
+    const next = new Set(this.expandedPicks());
+    if (!next.delete(heroId)) {
+      next.add(heroId);
+    }
+    this.expandedPicks.set(next);
+  }
+
+  protected topPerksFor(heroId: string): HeroTopPerks | undefined {
+    return HERO_TOP_PERKS[heroId];
+  }
+
+  private static readonly MAPS_SHOWN = 3;
+
+  private mapsFor(heroId: string): HeroMapSnapshot[] {
+    return this.heroMaps
+      .value()
+      .filter((m) => m.heroId === heroId)
+      .sort((a, b) => b.winRate - a.winRate);
+  }
+
+  protected bestMapsFor(heroId: string): HeroMapSnapshot[] {
+    return this.mapsFor(heroId).slice(0, CounterPickerPage.MAPS_SHOWN);
+  }
+
+  protected worstMapsFor(heroId: string): HeroMapSnapshot[] {
+    const maps = this.mapsFor(heroId);
+    const best = this.bestMapsFor(heroId);
+    return maps
+      .slice(-CounterPickerPage.MAPS_SHOWN)
+      .reverse()
+      .filter((m) => !best.includes(m));
   }
 }

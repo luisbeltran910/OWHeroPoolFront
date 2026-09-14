@@ -1,6 +1,6 @@
 .dialog-panel {
   max-width: 30rem;
-  max-height: min(38rem, 90vh);
+  max-height: 90vh;
 }
 
 .dialog-panel__identity {
@@ -73,4 +73,39 @@
   border: 1px solid var(--border);
   border-radius: 999px;
   padding: 0.2rem 0.7rem 0.2rem 0.3rem;
+}
+
+.map-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.map-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.4rem 0.7rem;
+}
+
+.map-row__name {
+  color: var(--text);
+}
+
+.map-row__rate {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+
+  &--good {
+    color: var(--positive);
+  }
+
+  &--bad {
+    color: var(--negative);
+  }
 }

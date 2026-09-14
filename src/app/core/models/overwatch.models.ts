@@ -34,6 +34,15 @@ export enum HeroRole {
   Support = 'SUPPORT',
 }
 
+/**
+ * Mirrors com.heropool.backend.model.GameQueue. Quick Play never has ban data (bans only
+ * happen in Competitive), so banRate is always 0 for Quick Play snapshots.
+ */
+export enum GameQueue {
+  QuickPlay = 'QUICK_PLAY',
+  Competitive = 'COMPETITIVE',
+}
+
 /** Mirrors com.heropool.backend.model.HeroSnapshot as serialized by Jackson. */
 export interface HeroSnapshot {
   id: number;
@@ -46,6 +55,29 @@ export interface HeroSnapshot {
   region: Region;
   tier: Tier;
   inputType: InputType;
+  gameQueue: GameQueue;
+  winRate: number;
+  pickRate: number;
+  banRate: number;
+}
+
+/**
+ * Mirrors com.heropool.backend.model.HeroMapSnapshot as serialized by Jackson. Scraped only at
+ * Tier.ALL / InputType.PC (see HeroMapScrapeService on the backend for why), so this data
+ * reflects all ranks regardless of the tier selected elsewhere in the app.
+ */
+export interface HeroMapSnapshot {
+  id: number;
+  snapshotDate: string;
+  heroId: string;
+  heroName: string;
+  portraitUrl: string | null;
+  role: HeroRole;
+  region: Region;
+  tier: Tier;
+  inputType: InputType;
+  map: string;
+  mapName: string;
   winRate: number;
   pickRate: number;
   banRate: number;
@@ -72,6 +104,11 @@ export const TIER_LABELS: Record<Tier, string> = {
 export const INPUT_LABELS: Record<InputType, string> = {
   [InputType.Pc]: 'PC',
   [InputType.Console]: 'Console',
+};
+
+export const GAME_QUEUE_LABELS: Record<GameQueue, string> = {
+  [GameQueue.QuickPlay]: 'Quick Play',
+  [GameQueue.Competitive]: 'Competitive',
 };
 
 export const ROLE_LABELS: Record<HeroRole, string> = {
