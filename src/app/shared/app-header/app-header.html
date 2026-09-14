@@ -1,16 +1,44 @@
 <header class="site-header">
   <div class="site-header__inner">
     <a routerLink="/" class="brand">
-      <span class="brand__mark" aria-hidden="true">OW</span>
+      <app-logo [size]="34" />
       <div class="brand__copy">
         <h1 class="brand__title">Hero Pool</h1>
         <span class="brand__subtitle">Competitive pick, win &amp; ban rates</span>
       </div>
     </a>
 
-    <nav class="site-nav">
-      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Dashboard</a>
-      <a routerLink="/counter-picker" routerLinkActive="active">Counter Picker</a>
+    <nav class="site-nav" aria-label="Primary">
+      @for (link of navLinks; track link.path) {
+        <a
+          class="site-nav__link"
+          [routerLink]="link.path"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: link.exact }"
+        >
+          <svg class="site-nav__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            @switch (link.icon) {
+              @case ('dashboard') {
+                <rect x="3" y="3" width="7" height="9" rx="1.5" stroke="currentColor" stroke-width="2" />
+                <rect x="14" y="3" width="7" height="5" rx="1.5" stroke="currentColor" stroke-width="2" />
+                <rect x="14" y="12" width="7" height="9" rx="1.5" stroke="currentColor" stroke-width="2" />
+                <rect x="3" y="16" width="7" height="5" rx="1.5" stroke="currentColor" stroke-width="2" />
+              }
+              @case ('target') {
+                <circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="2" />
+                <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2" />
+                <path
+                  d="M12 2v3M12 19v3M2 12h3M19 12h3"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                />
+              }
+            }
+          </svg>
+          {{ link.label }}
+        </a>
+      }
     </nav>
   </div>
 </header>
